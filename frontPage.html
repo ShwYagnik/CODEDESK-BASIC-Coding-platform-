@@ -1,0 +1,623 @@
+<!DOCTYPE HTML>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>CODEDESK</title>
+<script src='jquery/jquery.js'></script>
+<style>
+.labels
+{
+color:lightgreen;
+font-family:verdana;
+font-weight:bold;
+font-size:17pt;
+margin-left:60px;
+}
+
+.buttons
+{
+color:lightgreen;
+background:black;
+border-radius:8px;
+font-size:16pt;
+font-family:verdana;
+margin-left:90px;
+}
+.main_container
+{
+border:1px solid black;
+x:0;
+y:0;
+width:1000px;
+height:490px;
+border-radius:8px;
+}
+.container_one
+{
+margin-left:85px;
+margin-top:73px;
+border:5px solid lightgreen;
+width:800px;
+height:400px;
+border-radius:8px;
+}
+.main_label
+{
+left:40%;
+top:1%;
+position:absolute;
+border-radius:8px;
+}
+.logoDiv
+{
+left:35%;
+top:4%;
+position:absolute;
+width:50px;
+height:40px;
+border-radius:8px;
+}
+.usernameLabel
+{
+left:83%;
+top:3%;
+position:absolute;
+width:150px;
+height:30px;
+text-align:center;
+color:lightgreen;
+font-weight:bold;
+font-size:16pt;
+font-family:verdana;
+}
+.container_two
+{
+margin-left:240px;
+margin-top:98px;
+border:5px solid lightgreen;
+width:300px;
+height:220px;
+border-radius:8px;
+}
+
+.content_container_two
+{
+margin-left:95px;
+margin-top:50px;
+font-size:17pt;
+font-weight:bold;
+font-family:verdana;
+color:lightgreen;
+}
+.left_button
+{
+margin-left:10px;
+
+font-size:16pt;
+color:lightgreen;
+background:black;
+border-radius:8px;
+}
+.right_button
+{
+margin-left:200px;
+font-size:16pt;
+color:lightgreen;
+background:black;
+border-radius:8px;
+}
+.error
+{
+margin-left:220px;
+margin-top:98px;
+color:red;
+font-weight:bold;
+font-size:14pt;
+font-family:verdana;
+}
+.text_fields
+{
+background:black;
+color:lightgreen;
+border:1px solid black;
+border-radius:8px;
+font-family:verdana;
+font-size:16pt;
+auto-suggest:none;
+padding-left:9px;
+}
+</style>
+<script>
+function initialDisplay()
+{
+
+
+$("#container1").empty();
+$("#container2").remove();
+$("#userid").remove();
+var containerTwo=$("<div id='container2'></div>");
+$("#container1").append(containerTwo);
+$("#container2").addClass('container_two');
+$("#container2").append($("<label id='login_label'>Already a user?</label>"));
+$("#login_label").addClass('labels');
+$("#container2").append($("<br><br>"));
+$("#container2").append($("<button id='login' type='button'>Login</button>"));
+$("#login").addClass('buttons');
+$("#container2").append($("<br><br>"));
+
+
+$("#container2").append($("<label id='sign_label'>New User?</label>"));
+$("#sign_label").addClass('labels');
+$("#container2").append($("<br><br>"));
+$("#container2").append($("<button id='sign' type='button'>Sign in</button>"));
+$("#sign").addClass('buttons');
+
+
+$("#login").click(loginClicked);
+$("#sign").click(signUpClicked);
+}
+function submitCode(questionCode)
+{
+if($("#choosePL").val()==-1)
+{
+$("#errorLabel").remove();
+$("#container1").append($("<label id='errorLabel' style='position:absolute;left:30%;top:34%;width:460px;height:25px;font-size:14pt;font-weight:bold;color:red'>* CHOOSE A PROGRAMMING LANGUAGE!!</label>"));
+$("#choosePL").on('click',function(){
+$("#errorLabel").remove();
+});
+}
+else
+{
+if($("#editor").val().length==0)
+{
+$("#errorLabel").remove();
+$("#container1").append($("<label id='errorLabel' style='position:absolute;left:30%;top:34%;width:460px;height:25px;font-size:14pt;font-weight:bold;color:red'>* ENTER YOUR CODE !!</label>"));
+$("#editor").on('keydown',function(){
+$("#errorLabel").remove();
+});
+}
+else
+{
+//actual code
+$("#errorLabel").remove();
+
+
+
+//send an ajax
+$.ajax({
+url:'compile',
+data:{
+"qCode":questionCode,
+"lCode":$("#choosePL").val(),
+"program":$("#editor").val()
+},
+type:'get',
+success:function(result){
+
+if(result=="null")
+{
+//both the test cases passed
+$("#t1").remove();
+$("#t2").remove();
+$("#container1").append("<div id='t1' style='position:absolute;text-align:center;top:45%;left:79%;width:80px;height:103px;background:white;border:1px solid black;font-size:8pt'>Test case 1</div>");
+$("#t1").append($("<br>"));
+$("#t1").append($("<text font-weight:bold>Passed</text>"));
+$("#t1").append($("<br>"));
+$("#t1").append($("<br>"));
+$("#t1").append($("<br>"));
+$("#t1").append($("<br>"));
+$("#t1").append($("<img src='images/correct.png'>"));
+
+
+$("#container1").append("<div id='t2' style='position:absolute;text-align:center;top:70%;left:79%;width:80px;height:103px;background:white;border:1px solid black;font-size:8pt'>Test case 2</div>");
+$("#t2").append($("<br>"));
+$("#t2").append($("<text font-weight:bold>Passed</text>"));
+$("#t2").append($("<br>"));
+$("#t2").append($("<br>"));
+$("#t2").append($("<br>"));
+$("#t2").append($("<br>"));
+$("#t2").append($("<img src='images/correct.png'>"));
+
+}
+else
+{
+//none of the test cases passed
+$("#t1").remove();
+$("#t2").remove();
+$("#container1").append("<div id='t1' style='position:absolute;overflow:auto;color:red;text-align:center;top:45%;left:79%;width:80px;height:103px;background:white;border:1px solid black;font-size:5pt'>Test case 1</div>");
+$("#t1").append($("<br>"));
+$("#t1").append($("<text font-weight:bold>Failed</text>"));
+$("#t1").append($("<text font-weight:bold;color:red>"+result+"</text>"));
+
+$("#t1").append($("<br>"));
+$("#t1").append($("<br>"));
+$("#t1").append($("<img src='images/wrong.png'>"));
+
+$("#container1").append("<div id='t2' style='position:absolute;color:red;overflow:auto;text-align:center;top:70%;left:79%;width:80px;height:103px;background:white;border:1px solid black;font-size:5pt'>Test case 2</div>");
+$("#t2").append($("<br>"));
+$("#t2").append($("<text font-weight:bold>Failed</text>"));
+$("#t2").append($("<text font-weight:bold;color:red>"+result+"</text>"));
+
+$("#t2").append($("<br>"));
+$("#t2").append($("<br>"));
+$("#t2").append($("<img src='images/wrong.png'>"));
+
+}
+}
+});
+
+
+
+}
+}
+}
+function showItFinally(code,statements)
+{
+$("#container1").append($("<label id='qLabel' class='labels' style='position:absolute;left:6%;top:18%;overflow:auto;width:750px;height:70px;border-radius:8px;font-size:12pt;border:2px solid lightgreen;background:black'>"+statements+"</>"));
+$("#container1").append($("<select id='choosePL' style='position:absolute;left:12%;top:34%;width:160px;height:25px;border-radius:8px;font-size:12pt;border:2px solid lightgreen;color:lightgreen;background:black'><option value='-1'>choose a language</option><option value='0'>C</option><option value='1'>C++</option><option value='2'>Java</option><option value='3'>Python</option></select>"));
+$("#container1").append($("<button id='back' title='Go Back' style='position:absolute;left:76%;top:33%;width:43px;height:36px;background:black'><img src='images/back.png'></button>"));
+
+$("#container1").append($("<button id='run' title='Save and Run' style='position:absolute;left:82%;top:33%;width:43px;height:36px;background:black'><img src='images/run4.png'></button>"));
+$("#container1").append($("<textarea id='editor' rows='17.5' cols='88' style='position:absolute;left:12%;top:40%;resize:none'></textarea>"));
+$("#run").on('click',function(){
+submitCode(code);
+});
+$("#back").click(showTopics)
+}
+function questionChosen(questionCode)
+{
+
+var obj=this;
+this.questionCode=questionCode;
+//send an ajax to fetch the real question from the question code
+$.ajax({
+url:'getQuestionByQuestionCode',
+data:{
+"code":questionCode
+},
+type:'get',
+success:function(result){
+
+$("#container1").empty();
+$("#container1").css("overflow","scroll");
+showItFinally(obj.questionCode,result);
+
+
+
+}
+});
+}
+function displayQuestions(result)
+{
+
+$("#container1").empty();
+
+$("#container1").append($("<label style='position:absolute;text-align:center;font-size:20pt;top:17%;left:40%;border:5px solid lightgreen;background-color:black;color:lightgreen;font-family:verdana;font-weight:bold;border-radius:8px;width:180px;height:35px'>QUESTIONS</label><br><br><br>"));
+
+var list=JSON.parse(result);
+
+
+for(var i=0;i<list.length;i++)
+{
+
+$("#container1").append($("<label style='position:absolute;text-align:center;font-size:17pt;left:15%;border:5px solid lightgreen;background-color:black;color:lightgreen;font-family:verdana;font-weight:bold;border-radius:8px;width:650px;height:30px' id='"+list[i].questionCode+"' onclick='questionChosen("+list[i].questionCode+")'>"+list[i].questionTitle+"....</label><br><br><br><br>"));
+
+}
+
+$("#container1").append($("<button style='position:absolute;top:87%;left:14%;font-size:16pt;color:lightgreen;border-radius:8px;background-color:black;border:3px solid lightgreen' id='back'>Back</button>"));
+
+$("#back").click(showTopics);
+}
+function showQuestions(topicCode)
+{
+
+//send an ajax jo topic code le aur us topic se related questions lauta de
+$.ajax({
+url:'getQuestionsByTopicCode',
+data:{
+"code":topicCode
+},
+type:'get',
+success:function(result)
+{
+displayQuestions(result);
+}
+});
+}
+function showTopicDescription(topicCode,topicDescription)
+{
+
+var obj=this;
+this.topicCode=topicCode;//IN JAVASCRIPT YOU CAN PROPERTIES IN AN OBJECT DYNAMICALLY
+
+$("#container1").empty();
+$("#container1").append($("<div style='position:absolute;border-radius:8px;left:23%;font-size:14pt;top:25%;color:lightgreen;background-color:black;border:4px solid lightgreen;width:500px;height:300px;text-align:center' id='descDiv'>"+"DESCRIPTION"+"<br><br>"+topicDescription+"</div>"));
+$("#descDiv").append($("<button style='position:absolute;top:87%;left:79%;font-size:16pt;color:lightgreen;border-radius:8px;background-color:black;border:3px solid lightgreen' id='practise'>Practise</button>"));
+$("#descDiv").append($("<button style='position:absolute;top:87%;left:2%;font-size:16pt;color:lightgreen;border-radius:8px;background-color:black;border:3px solid lightgreen' id='back'>Back</button>"));
+
+$("#back").click(showTopics);
+
+$("#practise").click(function(){
+showQuestions(obj.topicCode);
+});
+}
+function topicDescription(index)
+{
+//send an ajax
+//jo topicCode le aur topicDescription dede
+
+$.ajax({
+url:'getTopicByDescription',
+data:{
+"code":index
+},
+type:'get',
+success:function(result){
+showTopicDescription(index,result);
+}
+});
+
+}
+
+function showTopics()
+{
+//place an ajax call which will retrieve all the topics 
+//then remove the container2 so that in container 1 itself you have enough space to display topics
+$.ajax({
+url:'topic',
+type:'get',
+success:function(result)
+{
+$("#container1").empty();
+var list=JSON.parse(result);
+$("#container1").append($("<br><br><br>"));
+for(var i=0;i<list.length;i++)
+{
+$("#container1").append($("<label style='position:absolute;text-align:center;font-size:17pt;left:30%;border:5px solid lightgreen;background-color:black;color:lightgreen;font-weight:bold;border-radius:8px;width:400px;height:27px' onclick='topicDescription("+list[i].topicCode+")'>"+list[i].topicName+"</label><br><br><br>"));
+}
+$("#container1").append($("<button style='position:absolute;top:87%;left:14%;font-size:16pt;color:lightgreen;border-radius:8px;background-color:black;border:3px solid lightgreen' id='backTo'>Back</button>"));
+
+$("#backTo").click(function(){
+
+initialDisplay();
+});
+
+}
+});
+
+}
+function userAdded(result)
+{
+var obj=this;
+this.username=$("#username").val();
+this.password=$("#password").val();
+$("#container2").remove();
+$("#container1").append($("<label style='position:absolute;left:43%;color:lightgreen;font-weight:bold;font-size:18pt;top:45%' id='addAnnounce'>"+result+"</label><br><br>"));
+$("#container1").append($("<button style='position:absolute;left:44%;color:lightgreen;background-color:black;border-radius:8px;top:54%;font-weight:bold;font-size:18pt' type='button' id='ok'>OK</button>"));
+$("#ok").click(function(){
+displayUsername('true',obj.username);
+showTopics();
+});
+}
+function userVerified(result)
+{
+var obj=this;
+this.username=$("#username").val();
+this.password=$("#password").val()
+$("#container2").remove();
+
+$("#container1").append($("<label style='position:absolute;left:43%;color:lightgreen;font-weight:bold;font-size:18pt;top:45%' id='verifyAnnounce'>"+result+"</label><br><br>"));
+$("#container1").append($("<button style='position:absolute;left:44%;color:lightgreen;background-color:black;border-radius:8px;top:54%;font-weight:bold;font-size:18pt' type='button' id='ok'>OK</button>"));
+$("#ok").click(function()
+{
+if(result=="Failed login!")
+{
+displayUsername('false',obj.username);
+loginClicked();
+}
+else
+{
+displayUsername('true',obj.username);
+showTopics();
+}
+});
+}
+function displayUsername(param,username)
+{
+if(param=='true')
+{
+$("#userid").remove();
+$("#mainContainer").append("<label id='userid' style='left:85%;top:5%;position:absolute;color:lightgreen;font-size:16pt;font-weight:bold;text-align:center;width:130px;height:30px'><img src='images/admin.png'>"+username+"</label>");
+}
+else
+{
+$("#userid").remove();
+}
+}
+function backClicked()
+{
+
+
+$("#container2").remove();
+initialDisplay();
+$("#error_label").remove();
+}
+function loginClicked()
+{
+$("#container2").remove();
+$("#container1").empty();
+var containerTwo=$("<div id='container2'></div>");
+$("#container1").append(containerTwo);
+$("#container2").addClass('container_two');
+
+$("#container2").append($("<label id='login_header'>LOGIN</label>"));
+$("#login_header").addClass('content_container_two');
+$("#login_header").css("font-size","24pt");
+$("#container2").append($("<br><br>"));
+$("#container2").append($("<input type='text' id='username' name='username' class='text_fields' placeholder='enter username' autocomplete='off'><br><br>"));
+$("#container2").append($("<input type='password' id='password' name='password' class='text_fields' placeholder='enter password' autocomplete='off'><br><br><br>"));
+
+$("#container2").append($("<button id='back' type='button'>Back</button>"));
+$("#back").addClass('left_button');
+$("#container2").append($("<button id='proceed' type='button'>Proceed</button>"));
+$("#proceed").css({"margin-left":"120px","background":"black","color":"lightgreen","font-family":"verdana","font-size":"15pt","border-radius":"8px"});
+ $("#back").click(backClicked);
+$("#proceed").click(proceedLogin);
+
+}
+function proceedSignIn()
+{
+
+if($("#username").val().length==0 || $("#password").val().length==0 ||  $("#cnfpassword").val().length==0 )
+{
+$("#container1").append($("<label id='error_label'>*Please fill all the required fields</label>"));
+$("#error_label").addClass('error');
+$("#username").keydown(function(){
+$("#error_label").remove();
+});
+$("#password").keydown(function(){
+$("#error_label").remove();
+});
+$("#cnfpassword").keydown(function(){
+$("#error_label").remove();
+});
+}
+else
+{
+if(!($("#password").val()==$("#cnfpassword").val()))
+{
+alert("Password and the re-entered password do not match");
+}
+else
+{
+signIn();
+//send an ajax
+
+$.ajax({
+url:'verifyUser',
+data:{
+"username":$("#username").val(),
+"password":$("#password").val()
+},
+type:'get',
+success:function(result){
+userAdded(result);
+}
+});
+}
+}
+
+}
+function proceedLogin()
+{
+//here first check the status of the text fields
+
+if($("#username").val().length==0 || $("#password").val().length==0  )
+{
+$("#container1").append($("<label id='error_label'>*Please fill all the required fields</label>"));
+$("#error_label").addClass('error');
+$("#username").keydown(function(){
+$("#error_label").remove();
+});
+$("#password").keydown(function(){
+$("#error_label").remove();
+});
+}
+else
+{
+logIn();
+//send an ajax
+$.ajax({
+url:'logUser',
+data:{
+"username":$("#username").val(),
+"password":$("#password").val()
+},
+type:'get',
+success:function(result){
+userVerified(result);
+}
+});
+}
+//here
+}
+function signIn()
+{
+
+}
+function logIn()
+{
+
+}
+function signUpClicked()
+{
+$("#container2").remove();
+$("#container1").empty();
+var containerTwo=$("<div id='container2'></div>");
+$("#container1").append(containerTwo);
+$("#container2").addClass('container_two');
+
+$("#container2").append($("<label id='sign_up_header'>SIGN UP</label>"));
+$("#sign_up_header").addClass('content_container_two');
+$("#sign_up_header").css("font-size","24pt");
+$("#container2").append($("<br>"));
+$("#container2").append($("<input type='text' id='username' name='username' class='text_fields' placeholder='enter username' autocomplete='off'><br><br>"));
+$("#container2").append($("<input type='password' id='password' name='password' class='text_fields' placeholder='enter password' autocomplete='off'><br><br>"));
+$("#container2").append($("<input type='password' id='cnfpassword' name='cnfpassword' class='text_fields' placeholder='re-enter password' autocomplete='off'><br><br>"));
+$("#container2").append($("<button id='back' type='button'>Back</button>"));
+$("#back").addClass('left_button');
+$("#container2").append($("<button id='proceed' type='button'>Proceed</button>"));
+$("#proceed").css({"margin-left":"120px","background":"black","color":"lightgreen","font-family":"verdana","font-size":"15pt","border-radius":"8px"});
+$("#back").click(backClicked);
+
+
+$("#proceed").click(proceedSignIn);
+
+
+}
+$(()=>{
+$("#mainContainer").addClass('main_container');
+$("#mainContainer").css("background-image","url('images/bgimg3.jpg')");
+var mainLabel=$("<label style='color:lightgreen;font-family:verdana;font-size:38pt'>CODEDESK</label>");
+$("#mainContainer").append(mainLabel);
+mainLabel.addClass('main_label');
+$("#mainContainer").append($("<label id='logo_div' style='background:black;color:lightgreen;font-size:26pt;font-weight:bold;text-align:center'>#</label>"));
+$("#logo_div").addClass('logoDiv');
+$("#mainContainer").append($("<div id='container1'></div>"));
+$("#container1").addClass('container_one');
+
+$(document).ajaxStart(function(){
+$(this).html("<img src='images/gif.png'>");
+});
+//initially what is to be displayed starts here
+initialDisplay();
+
+//initially what is to be displayed ends here
+
+
+
+//login button clicked starts here
+
+
+
+//back button starts here
+
+
+
+
+
+
+
+//back button ends here
+
+
+
+
+});
+</script>
+</head>
+<body>
+<div id='mainContainer'>
+</div>
+</body>
+</html>
